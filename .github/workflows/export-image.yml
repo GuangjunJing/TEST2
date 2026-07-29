@@ -1,17 +1,32 @@
-name: 导出Docker镜像
+name: 源码构建并导出Indigo服务镜像
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Indigo版本号'
+        default: '1.45.0'
+        required: false
 
 jobs:
-  export:
+  build-and-export:
     runs-on: ubuntu-latest
     steps:
-      - name: 拉取镜像并导出
+      - name: 拉取官方源码
+        uses: actions/checkout@v4
+        with:
+          repository: epam/Indigo
+          ref: indigo-${{ github.event.inputs.version }}
+
+      - name: 构建Indigo Service镜像
         run: |
-          docker pull epam/indigo-service:latest
-          docker save -o indigo-service.tar epam/indigo-service:latest
+          # 进入服务目录构建镜像
+          cd service
+          docker build -t epam/indigo-service:latest .
           
-      - name: 上传打包文件
+          # 导出为tar包
+          docker save -o ../indigo-service.tar epam/indigo-service:latest
+
+      - name: 上传镜像打包文件
         uses: actions/upload-artifact@v4
         with:
           name: indigo-service-image

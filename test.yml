@@ -1,4 +1,4 @@
-name: 导出Docker镜像
+name: 导出Indigo官方服务镜像
 on:
   workflow_dispatch:
 
@@ -6,16 +6,16 @@ jobs:
   export:
     runs-on: ubuntu-latest
     steps:
-      - name: 拉取官方GHCR镜像并重命名
+      - name: 拉取官方正式镜像并重命名
         run: |
-          # 拉取官方托管在GHCR的正式镜像
-          docker pull ghcr.io/epam/indigo-service:latest
-          # 重命名为原名称，服务器端命令不用改
-          docker tag ghcr.io/epam/indigo-service:latest epam/indigo-service:latest
-          # 导出为tar包
+          # 官方正确镜像地址：epmlsop/indigo-service
+          docker pull epmlsop/indigo-service:latest
+          # 重命名为你熟悉的名称，服务器端命令统一
+          docker tag epmlsop/indigo-service:latest epam/indigo-service:latest
+          # 导出为tar压缩包
           docker save -o indigo-service.tar epam/indigo-service:latest
           
-      - name: 上传镜像打包文件
+      - name: 上传镜像文件
         uses: actions/upload-artifact@v4
         with:
           name: indigo-service-image

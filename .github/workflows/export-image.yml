@@ -1,0 +1,18 @@
+name: 导出Docker镜像
+on:
+  workflow_dispatch:
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取镜像并导出
+        run: |
+          docker pull epam/indigo-service:latest
+          docker save -o indigo-service.tar epam/indigo-service:latest
+          
+      - name: 上传打包文件
+        uses: actions/upload-artifact@v4
+        with:
+          name: indigo-service-image
+          path: indigo-service.tar
